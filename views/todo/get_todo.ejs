@@ -7,6 +7,26 @@
        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body>
-    <h1 class="text-blue-400">This is get</h1>
+    <%- include("../partials/nav") %>
+    <div class="max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-16">
+    <div class="px-4 py-2">
+        <h1 class="text-gray-800 font-bold text-2xl uppercase">To-Do List</h1>
+    </div>
+    <ul class="divide-y divide-gray-200 px-4">
+        <% datas.forEach(function(data){ %>
+
+            <li class="py-4">
+                <div class="flex items-center">
+                    <input id="todo3" name="todo3" type="checkbox"
+                    class="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded">
+                    <label for="todo3" class="ml-3 block text-gray-900">
+                        <span class="text-lg font-medium"><%- data.title %></span>
+                        <span class="text-sm font-light text-gray-500"> <%- data.date %></span>
+                    </label>
+                </div>
+            </li>
+            <% }) %>
+    </ul>
+</div>
 </body>
 </html>
