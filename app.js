@@ -21,21 +21,43 @@ app.get('/login', (req, res) => {
     res.render("Authentication/login.ejs");
 });
 
-app.post("/login",async(req,res)=>{
-    try {
-        const {email, password} = req.body
-        const isUsername = await db.users.findOne({where: {email}})
-        const isPassword =await bcrypt.compare(password, isUsername.password)
-        if(!isUsername || !isPassword){
-            return res.status(401).json({message: "Invalid Credentials"})
-        }
-        res.redirect("/")
+// app.post("/login",async(req,res)=>{
+//     try {
+//         const {email, password} = req.body
+//         const isUsername = await db.users.findOne({where: {email}})
+//         const isPassword =await bcrypt.compare(password, isUsername.password)
+//         if(!isUsername || !isPassword){
+//             return res.status(401).json({message: "Invalid Credentials"})
+//         }
+//         res.redirect("/")
         
-    } catch (error) {
-        res.status(500).json({ message: 'Error logging in', error: error.message });
+//     } catch (error) {
+//         res.status(500).json({ message: 'Error logging in', error: error.message });
+//     }
+// })
+
+app.post("/login",async(req,res)=>{
+    const {email, password} = req.body
+    const users = await db.users.findAll({
+        where : {
+            email : email,
+            
+        }
+    })
+    if(users.length==0){
+        res.send("Not registered email")
+    }
+    else{
+        //now check password , first --> plain password(form bata aako),
+        //second hashed password already register garda table ma haleko
+        const idPasswordMartch = bcrypt.compareSync(password,users[0].password)
+        if(idPasswordMartch){
+            res.send("Logged in successfully")
+        } else {
+            res.send("Invalid credentials")
+        }
     }
 })
-
 app.get('/register', (req, res) => {
     res.render("Authentication/register.ejs");
 });
