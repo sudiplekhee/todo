@@ -7,6 +7,8 @@ const { where } = require("sequelize");
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 
+const jwt = require("jsonwebtoken")
+
 // Removed duplicate /about route
 // app.get('/', (req, res) => {
 //     res.send("This is slice page")
@@ -52,7 +54,14 @@ app.post("/login",async(req,res)=>{
         //second hashed password already register garda table ma haleko
         const idPasswordMartch = bcrypt.compareSync(password,users[0].password)
         if(idPasswordMartch){
-            res.send("Logged in successfully")
+            //token generation
+            const token = jwt.sign({ name : "sudip"},"secretkey",{
+                expiresIn : "1d"
+            })
+            // jwt.sign({ name : "k lukaune"},"key", { kati din samma lukaune})
+            res.cookie("token", token)
+            res.redirect("/")
+            // res.send("Logged in successfully")
         } else {
             res.send("Invalid credentials")
         }
@@ -64,7 +73,6 @@ app.get('/register', (req, res) => {
 
 app.get('/', async(req, res) => {
     const datas = await db.todos.findAll()
-    console.log(datas)
     res.render("todo/get_todo.ejs", {datas :datas});
 });
 
