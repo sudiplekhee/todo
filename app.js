@@ -3,12 +3,14 @@ const app = express();
 const db = require("./config/db"); // Assign the exported db from ./config/db
 const bcrypt = require("bcrypt"); // Assign bcrypt to a variable
 const { where } = require("sequelize");
-
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const isLogInOrNot = require("./middleware/isLogin");
 
+const cookieParser = require("cookie-parser")
+app.use(cookieParser())
 // Removed duplicate /about route
 // app.get('/', (req, res) => {
 //     res.send("This is slice page")
@@ -22,21 +24,6 @@ const jwt = require("jsonwebtoken")
 app.get('/login', (req, res) => {
     res.render("Authentication/login.ejs");
 });
-
-// app.post("/login",async(req,res)=>{
-//     try {
-//         const {email, password} = req.body
-//         const isUsername = await db.users.findOne({where: {email}})
-//         const isPassword =await bcrypt.compare(password, isUsername.password)
-//         if(!isUsername || !isPassword){
-//             return res.status(401).json({message: "Invalid Credentials"})
-//         }
-//         res.redirect("/")
-        
-//     } catch (error) {
-//         res.status(500).json({ message: 'Error logging in', error: error.message });
-//     }
-// })
 
 app.post("/login",async(req,res)=>{
     const {email, password} = req.body
@@ -76,7 +63,7 @@ app.get('/', async(req, res) => {
     res.render("todo/get_todo.ejs", {datas :datas});
 });
 
-app.get('/add', (req, res) => {
+app.get('/add', isLogInOrNot , (req, res) => {
     res.render("todo/add_todo.ejs");
 });
 
