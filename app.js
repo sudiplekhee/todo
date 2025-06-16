@@ -1,8 +1,11 @@
 const express = require("express");
 const app = express();
+
 const db = require("./config/db"); // Assign the exported db from ./config/db
+
 const bcrypt = require("bcrypt"); // Assign bcrypt to a variable
 const { where } = require("sequelize");
+
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 
@@ -11,6 +14,7 @@ const isLogInOrNot = require("./middleware/isLogin");
 
 const cookieParser = require("cookie-parser")
 app.use(cookieParser())
+
 // Removed duplicate /about route
 // app.get('/', (req, res) => {
 //     res.send("This is slice page")
@@ -21,6 +25,7 @@ app.use(cookieParser())
 // app.get('/about', (req, res) => {
 //     res.render("home.ejs")
 // });
+
 app.get('/login', (req, res) => {
     res.render("Authentication/login.ejs");
 });
@@ -54,21 +59,9 @@ app.post("/login",async(req,res)=>{
         }
     }
 })
+
 app.get('/register', (req, res) => {
     res.render("Authentication/register.ejs");
-});
-
-app.get('/', async(req, res) => {
-    const datas = await db.todos.findAll()
-    res.render("todo/get_todo.ejs", {datas :datas});
-});
-
-app.get('/add', isLogInOrNot , (req, res) => {
-    res.render("todo/add_todo.ejs");
-});
-
-app.get('/update', (req, res) => {
-    res.render("todo/update_todo.ejs");
 });
 
 app.post("/register", async (req, res) => {
@@ -89,6 +82,10 @@ app.post("/register", async (req, res) => {
     }
 });
 
+app.get('/add', isLogInOrNot , (req, res) => {
+    res.render("todo/add_todo.ejs");
+});
+
 app.post("/add", async(req,res)=>{
     const {title, description, date, status} = req.body
     await db.todos.create({
@@ -98,6 +95,17 @@ app.post("/add", async(req,res)=>{
     })
     res.redirect("/")
 })
+
+app.get('/', async(req, res) => {
+    const datas = await db.todos.findAll()
+    res.render("todo/get_todo.ejs", {datas :datas});
+});
+
+
+
+app.get('/update', (req, res) => {
+    res.render("todo/update_todo.ejs");
+});
 
 app.listen(3000, function () {
     console.log("Node js has started on the port 3000");
