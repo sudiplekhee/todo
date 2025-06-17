@@ -1,18 +1,19 @@
 const JWT = require("jsonwebtoken")
-const isLogInOrNot = (req,res)=>{
+const isLogInOrNot = (req,res, next)=>{
     //receive token
     const token = req.cookies.token
 
     //verify token
     if(!token){
-        res.send("Please login")
+        res.redirect("/login")
     } else {
         //verify the token
         JWT.verify(token, "secretkey", (error,result)=>{
             if(error){
-                res.send("invalid tokon")
+                res.redirect("/login")
             } else {
-                res.send('valid token, verified')
+                console.log(result)
+                next()
             }
         })
     }

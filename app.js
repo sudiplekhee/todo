@@ -47,9 +47,7 @@ app.post("/login",async(req,res)=>{
         const idPasswordMartch = bcrypt.compareSync(password,users[0].password)
         if(idPasswordMartch){
             //token generation
-            const token = jwt.sign({ name : "sudip"},"secretkey",{
-                expiresIn : "1d"
-            })
+            const token = jwt.sign({ id : users[0].id },"secretkey",{ expiresIn : "1d" })
             // jwt.sign({ name : "k lukaune"},"key", { kati din samma lukaune})
             res.cookie("token", token)
             res.redirect("/")
@@ -83,6 +81,7 @@ app.post("/register", async (req, res) => {
 });
 
 app.get('/add', isLogInOrNot , (req, res) => {
+    console.log(req.name)
     res.render("todo/add_todo.ejs");
 });
 
