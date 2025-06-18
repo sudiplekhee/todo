@@ -125,6 +125,15 @@ app.get("/dashboard", async(req,res)=>{
     res.render("todo/dashboard", {USERS : USERS})
 })
 
+app.get("/delete/:id", async (req,res)=>{
+    const id = req.params.id
+    await db.todos.destroy({
+        where : {
+            id: id
+        }
+    })
+})
+
 app.listen(3000, function () {
     console.log("Node js has started on the port 3000");
 });
