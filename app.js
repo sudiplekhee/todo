@@ -58,10 +58,13 @@ app.post("/login",async(req,res)=>{
     }
 })
 
+//register page
 app.get('/register', (req, res) => {
     res.render("Authentication/register.ejs");
 });
 
+
+//register page receive form data
 app.post("/register", async (req, res) => {
     const { username, email, password, confirm_password } = req.body;
     if (password !== confirm_password) {
@@ -80,23 +83,32 @@ app.post("/register", async (req, res) => {
     }
 });
 
+
+//add page 
 app.get('/add', isLogInOrNot , (req, res) => {
-    console.log(req.name)
     res.render("todo/add_todo.ejs");
 });
 
-app.post("/add", async(req,res)=>{
+//add page receive todo task
+app.post("/add",isLogInOrNot,  async(req,res)=>{
+    const userId=req.userId
     const {title, description, date, status} = req.body
     await db.todos.create({
         title : title,
         description : description,
         date : date,
+        userId: userId
     })
     res.redirect("/")
 })
 
-app.get('/', async(req, res) => {
-    const datas = await db.todos.findAll()
+app.get('/',isLogInOrNot,  async(req, res) => {
+    const userId = req.userId
+    const datas = await db.todos.findAll({
+        where : {
+            userId : userId
+        }
+    })
     res.render("todo/get_todo.ejs", {datas :datas});
 });
 
@@ -105,6 +117,12 @@ app.get('/', async(req, res) => {
 app.get('/update', (req, res) => {
     res.render("todo/update_todo.ejs");
 });
+
+//dashboard
+app.get("/dashboard", async(req,res)=>{
+    const USERS = await db.users.findAll()
+    res.render("todo/dashboard", {USERS : USERS})
+})
 
 app.listen(3000, function () {
     console.log("Node js has started on the port 3000");

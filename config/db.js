@@ -22,6 +22,10 @@ db.users=require("../models/userModel")(sequelize,DataTypes)
 db.products=require("../models/ProductModel")(sequelize,DataTypes)
 db.todos = require("../models/todoModel")(sequelize,DataTypes)
 
+//yesto relation xa [Foreign key]
+db.users.hasMany(db.todos)
+db.todos.belongsTo(db.users)
+
 sequelize.sync({alter:true})
 .then(()=>{
     console.log("Migrated successfully")

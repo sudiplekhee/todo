@@ -12,6 +12,7 @@ const isLogInOrNot = (req,res, next)=>{
             if(error){
                 res.redirect("/login")
             } else {
+                req.userId = result.id
                 console.log(result)
                 next()
             }
