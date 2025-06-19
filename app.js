@@ -126,7 +126,7 @@ app.get("/dashboard", async(req,res)=>{
 })
 
 //delete page
-app.get("/delete/:id", async (req,res)=>{
+app.get("/delete/:id",isLogInOrNot,  async (req,res)=>{
     const id = req.params.id
     await db.todos.destroy({
         where : {
@@ -136,7 +136,7 @@ app.get("/delete/:id", async (req,res)=>{
 })
 
 //edit page
-app.get("/edit/:id", async(req,res)=>{
+app.get("/edit/:id",isLogInOrNot, async(req,res)=>{
     const id = req.params.id
     const todos =await db.todos.findAll({
         where : {
@@ -144,6 +144,24 @@ app.get("/edit/:id", async(req,res)=>{
         }
     })
     res.render("todo/update_todo", {todos : todos})    
+})
+
+//edit page receive 
+app.post("/edit/:id", isLogInOrNot, async(req,res)=>{
+    const id = req.params.id
+    const {title, description, date, status} = req.body
+    await db.todos.update({
+        title : title,
+        description : description,
+        date : date,
+        status : status
+    },{
+        where : {
+            id : id
+        }
+    })
+    res.redirect("/")
+
 })
 
 app.listen(3000, function () {
