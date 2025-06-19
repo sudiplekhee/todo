@@ -125,6 +125,7 @@ app.get("/dashboard", async(req,res)=>{
     res.render("todo/dashboard", {USERS : USERS})
 })
 
+//delete page
 app.get("/delete/:id", async (req,res)=>{
     const id = req.params.id
     await db.todos.destroy({
@@ -132,6 +133,17 @@ app.get("/delete/:id", async (req,res)=>{
             id: id
         }
     })
+})
+
+//edit page
+app.get("/edit/:id", async(req,res)=>{
+    const id = req.params.id
+    const todos =await db.todos.findAll({
+        where : {
+            id : id
+        }
+    })
+    res.render("todo/update_todo", {todos : todos})    
 })
 
 app.listen(3000, function () {
